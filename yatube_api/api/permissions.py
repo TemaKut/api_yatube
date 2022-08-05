@@ -13,11 +13,6 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 class GetOnly(permissions.BasePermission):
     """ Разрешается только GET запрос. """
 
-    def has_permission(self, request, view):
-        if request.method == 'GET':
-            return True
-        return False
-
     def has_object_permission(self, request, view, obj):
         if request.method == 'GET':
             return True
