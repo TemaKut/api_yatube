@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from django.shortcuts import get_object_or_404
 
@@ -43,3 +44,7 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         post = get_object_or_404(Post, id=post_id)
         comments = Comment.objects.filter(post=post)
         return comments
+
+    def perform_create(self, serializer):
+        """ Установим имя автора для автоматического добавления. """
+        serializer.save(author=self.request.user)
