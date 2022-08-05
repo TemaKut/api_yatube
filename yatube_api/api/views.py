@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404
 
@@ -12,7 +13,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
     def perform_create(self, serializer):
         """ Установим имя автора для автоматического добавления. """
@@ -24,14 +25,14 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [GetOnly]
+    permission_classes = [GetOnly, IsAuthenticated]
 
 
 class PostCommentsViewSet(viewsets.ModelViewSet):
     """ Вьюсет для получения комментариев к конкретному посту. """
 
     serializer_class = CommentSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
     def get_queryset(self):
         """ Возвращаем queryset комментариев запрошенного поста. """
