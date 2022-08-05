@@ -45,6 +45,10 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         comments = Comment.objects.filter(post=post)
         return comments
 
-    def perform_create(self, serializer):
-        """ Установим имя автора для автоматического добавления. """
-        serializer.save(author=self.request.user)
+    def create(self, request, post_id, pk=None):
+        post = get_object_or_404(Post, id=post_id)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=self.request.user, post=post)
+            return Response(serializer.data)
+        return Response(serializer.errors)
