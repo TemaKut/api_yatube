@@ -49,6 +49,7 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         post = get_object_or_404(Post, id=post_id)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
+            # И юзер и пост передаются тут
             serializer.save(author=self.request.user, post=post)
             return Response(serializer.data)
         return Response(serializer.errors)
