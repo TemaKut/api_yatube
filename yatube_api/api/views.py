@@ -50,5 +50,5 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=self.request.user, post=post)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
