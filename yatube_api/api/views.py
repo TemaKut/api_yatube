@@ -41,8 +41,8 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         return Comment.objects.filter(post=post).select_related(
             'author', 'post')
 
-    def perform_create(self, request):
-        post_id = self.kwargs.get("post_id")
+    def create(self, request, post_id, pk=None):
+
         post = get_object_or_404(Post, id=post_id)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
