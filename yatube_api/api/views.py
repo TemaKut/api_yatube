@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from posts.models import Post, Group, Comment
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer
-from .permissions import IsOwnerOrReadOnly, GetOnly
+from .permissions import IsOwnerOrReadOnly
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -21,15 +21,11 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     """ Вьюсет для модели Group. """
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [GetOnly, IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class PostCommentsViewSet(viewsets.ModelViewSet):
@@ -42,10 +38,10 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         """ Возвращаем queryset комментариев запрошенного поста. """
         post_id = self.kwargs.get("post_id")
         post = get_object_or_404(Post, id=post_id)
-        comments = Comment.objects.filter(post=post)
-        return comments
+        return Comment.objects.filter(post=post).select_related(
+            'author', 'post')
 
-    def create(self, request, post_id, pk=None):
+    def perform_create(self, request, post_id, pk=None):
         post = get_object_or_404(Post, id=post_id)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
