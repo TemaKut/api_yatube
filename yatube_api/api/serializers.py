@@ -24,8 +24,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели Comment. """
-    author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username')
+    author = serializers.StringRelatedField(read_only=True)
     post = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
