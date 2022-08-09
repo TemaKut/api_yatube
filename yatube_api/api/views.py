@@ -41,11 +41,9 @@ class PostCommentsViewSet(viewsets.ModelViewSet):
         return Comment.objects.filter(post=post).select_related(
             'author', 'post')
 
-    def create(self, request, post_id, pk=None):
-
-        post = get_object_or_404(Post, id=post_id)
-        serializer = CommentSerializer(data=request.data)
+    def perform_create(self, serializer):
+        """В момент отправки метода POST
+        устанавливаем в качестве автора и поста свои значения."""
+        post = get_object_or_404(Post, id=self.kwargs.get("post_id"))
         if serializer.is_valid():
             serializer.save(author=self.request.user, post=post)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
